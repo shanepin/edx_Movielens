@@ -1,6 +1,22 @@
-You will use the following code to generate your datasets. Develop your algorithm using the edx set. For a final test of your final algorithm, predict movie ratings in the final_holdout_test set as if they were unknown. RMSE will be used to evaluate how close your predictions are to the true values in the final_holdout_test set.
 
-Important: The final_holdout_test data should NOT be used for training, developing, or selecting your algorithm and it should ONLY be used for evaluating the RMSE of your final algorithm. The final_holdout_test set should only be used at the end of your project with your final model. It may not be used to test the RMSE of multiple models during model development. You should split the edx data into separate training and test sets and/or use cross-validation to design and test your algorithm.
+## Introduction
+
+The aim of this project is to train a machine learning algorithm that will recommened movies to users they might enjoy based on their historical ratings to
+movies already seen and rated. Recommendation systems are one of the most used models in machine learning algorithms. In fact the success of Netflix is said to be based on its strong recommender system and other streaming services have done the same.
+
+For this project we will focus on creating a movie recommendation system using the 10M version of MovieLens dataset, collected by GroupLens Research. To determine the succes of our movie recommendation system we will use the "Root Mean Square Error" or "RMSE". RMSE is one of the most used models to measure differences between values predicted versus the values observed. RMSE is used to compare forecasting errors of different models for a particular dataset, a lower RMSE is better than a higher one. The effect of each error on RMSE is proportional to the size of the squared error; thus larger errors have a disproportionately large effect on RMSE. Consequently, RMSE is sensitive to outliers. 
+
+Remember that we can interpret the RMSE similarly to a standard deviation: it is the typical error we make when predicting a movie rating. If this number is larger than 1, it means our typical error is larger than one star, which is not good.
+
+The function that computes the RMSE for vectors of ratings and their corresponding predictors will be defined as follows
+
+```{r RMSE_function1, echo = FALSE}
+RMSE <- function(predicted_ratings, true_ratings){
+  sqrt(mean((predicted_ratings - true_ratings)^2))
+}
+```
+
+Finally, the best resulting model (lowest RMSE value) will be used to predict the movie ratings.
 
 # Create edx and final_holdout_test sets 
 
@@ -64,4 +80,18 @@ removed <- anti_join(temp, final_holdout_test)
 edx <- rbind(edx, removed)
 
 rm(dl, ratings, movies, test_index, temp, movielens, removed)
+
+# We can see the number of unique users that provided ratings and how many unique movies were rated
+
+edx %>% 
+  summarize(n_users = n_distinct(userId),
+            n_movies = n_distinct(movieId))
+
+
+
+
+
+
+
+
 
