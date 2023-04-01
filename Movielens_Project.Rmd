@@ -96,6 +96,39 @@ We will only use "edx" dataset for all our analysis and testing and the "final_h
 edx %>% 
   summarize(n_users = n_distinct(userId),
             n_movies = n_distinct(movieId))
+            
+# We observe that users have a preference for whole star rather than half star ratings and 4 is the most common rating, followed by 3 and 5. 0.5
+is the least common rating
+
+edx %>%
+    ggplot(aes(rating)) +
+    geom_histogram(binwidth = 0.25, color = "black") +
+    scale_x_continuous(limits = c(0.5,5,0.5)) + 
+    ggtitle("Rating Distribution")
+
+
+# We observe that some movies have been rated more often than others, while some have very few ratings and sometimes only one rating. This will be important
+for our model as very low rating numbers might results in untrustworthy estimate for our predictions. In fact 125 movies have been rated only once. 
+
+Thus regularisation and a penalty term will be applied to the models in this project. Regularizations are techniques used to reduce the error by fitting a function appropriately on the given training set and avoid overfitting (the production of an analysis that corresponds too closely or exactly to a particular set of data, and may therefore fail to fit additional data or predict future observations reliably). Regularization is a technique used for tuning the function by adding an additional penalty term in the error function. The additional term controls the excessively fluctuating function such that the coefficients don’t take extreme values.
+
+
+```{r number_of_ratings_per_movie, echo = TRUE, fig.height=4, fig.width=5}
+edx %>%
+count(movieId) %>%
+ggplot(aes(n)) +
+geom_histogram(bins = 30, color = "black") +
+scale_x_log10() +
+xlab("Number of ratings") +
+  ylab("Number of movies") +
+ggtitle("Number of ratings per movie")
+
+
+
+
+
+
+
 
 
 
