@@ -1,8 +1,8 @@
 
 ---
-title: "HarvardX: PH125.9x Data Science: Capstone Course \nMovie Rating Prediction Project; Movie Lens Dataset"
-author: "Byron Wicks"
-date: "5 June 2019"
+title: "Project: MovieLens Ratings System"
+author: "Shane Pinto"
+date: "2023-04-01"
 output: 
   pdf_document:
     number_sections: true 
@@ -15,11 +15,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 \newpage
 
-# Introduction
+# Introduction and Overview
 
-The Movie Lens project forms part of the HarvardX: PH125.9x Data Science: Capstone course. It closely follows the Data Science textbook by Rafael Irizarry paricularly; Chapter 34.7 Recommendation systems, and Chapter 34.9 Regularization. The dataset was supplied as part of the course.
+The aim of the Movie Lens Ratings System project is to develop and train a recommendation machine learning algorithm to predict a movie recommendation 
+by using historical ratings of users to movies in the dataset. Companies that sell many products to many customers and permit these customers to rate their
+products, like Amazon, are able to collect massive datasets that can be used to predict what rating a particular user will give a specific item. Items for
+which a high rating is predicted for a given user are then recommended to that user.
 
-The aim of the project is to develop and train a recommendation machine learning algorithm to predict a rating given by a users to a movie in the dataset. The Residual Mean Square Error (RMSE) will be used to evaluate the accuracy of the algorithm. The required criteria for the projects is a RMSE lower than 0.8775.
+Netflix uses a recommendation system to predict how many stars a user will give a specific movie. One star suggests it is not a good movie, whereas five stars suggests it is an excellent movie. Here, we provide the basics of how these recommendations are made, motivated by some of the approaches taken by the winners
+of the Netflix challenges. 
+
+To test the succes of of our recommendation system we will use the Residual Mean Square Error (RMSE) to evalute the accuracy of the algorithm. RMSE is one of the most tested methods that measures the differences between values predicted by a model and the values observed, a lower RMSE is better than a higher one. 
+
+The evaluation criteria for this algorithm is a RMSE expected to be lower than 0.8775 and is a function that computes the RMSE for vectors of ratings and their
+corresponding predictors and is stated as the following:
+
+$$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} $$
+
+```{r RMSE_function1, echo = FALSE}
+RMSE <- function(predicted_ratings, true_ratings){
+  sqrt(mean((predicted_ratings - true_ratings)^2))
+}
+```
+
 
 This report will present an overview of the data, analysis, results and a conclusion.
 
