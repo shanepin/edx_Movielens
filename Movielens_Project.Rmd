@@ -112,6 +112,16 @@ removed <- anti_join(temp, final_holdout_test)
 }
 ```
 
+As the final_holdout_test set will only be used for evaluating the RMSE of the final algorithm at the end, we need to create separate training and test sets
+to be used for training, developing and selecting our algorithms.
+
+```{r, echo=TRUE, message=FALSE}
+edx_test_index <- createDataPartition(y = edx$rating, times = 1, p = 0.1, list = FALSE)
+edx_train <- edx[-edx_test_index, ]
+edx_test <- edx[edx_test_index, ]
+}
+```
+
 Edx dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp", "title", "genres".
 
 ```{r, echo=TRUE}
