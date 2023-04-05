@@ -210,8 +210,10 @@ edx %>%
 
 
 # Analysis and Results
-The Residual Mean Square Error (RMSE) is the error function to that will measure accuracy and quantify the typical error we make when predicting the movie rating. An error larger than 0.8775, it means our typical error is larger than the required for this assignment almost a star, which is not good. RMSE defined;
+The Residual Mean Square Error (RMSE) is the error function to that will measure accuracy and quantify the typical error we make when predicting the movie rating.
+An error larger than 0.8775, it means our typical error is larger than the required for this assignment almost a star, which is not good. 
 
+RMSE defined;
 $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} $$
 where; N is the number of users, movie ratings, and the sum incorporating the total combinations.
 
@@ -219,13 +221,15 @@ where; N is the number of users, movie ratings, and the sum incorporating the to
 The simple prediction model uses the mean of the dataset to predict the rating for all movies. The model assumes that all differences are due to a random error;
 
 $$ Y_{u,i} = \mu + \epsilon_{u,i} $$
-where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the expected "true" rating for all movies. Predicting the mean gives the following naive RMSE.
+where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the expected "true" rating for all movies. 
+
+Predicting the mean gives the following naive RMSE.
 
 ```{r, echo=TRUE}
 ## Simple Prediction based on Mean Rating
 mu <- mean(edx$rating)
 mu
-rmse_naive <- RMSE(validation$rating, mu)
+rmse_naive <- RMSE(final_holdout_test$rating, mu)
 rmse_naive
 ## Save Results in Data Frame
 rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = rmse_naive)
@@ -248,7 +252,7 @@ mu
 movie_avgs <- edx %>%
   group_by(movieId) %>%
   summarise(b_i = mean(rating - mu))
-predicted_ratings <- mu + validation %>%
+predicted_ratings <- mu + final_holdout_test %>%
   left_join(movie_avgs, by='movieId') %>%
   pull(b_i)
 rmse_model_movie_effects <- RMSE(predicted_ratings, validation$rating)
