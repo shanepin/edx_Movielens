@@ -112,12 +112,10 @@ removed <- anti_join(temp, final_holdout_test)
 }
 ```
 
-
 Edx dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp", "title", "genres".
 
-
 ```{r, echo=TRUE}
-# Summarise Data
+# Summarise edx
 head(edx, 5)
 ```
 
@@ -140,7 +138,8 @@ rating_mean <- mean(edx$rating)
 rating_mean
 ```
 
-A histogram of the dataset mapping ratings and counts are below. The highest rating users give movies are, in decreasing order 4.0, 3.0, 5.0. Overall users rate movies higher in the ratings scale. Similarly, users are more likely to rate full ratings rather than half ratings on the scale.
+A histogram of the dataset mapping ratings and counts revals that the highest rating was 4.0 while the lowest rating was 0.5. Overall we also notice that 
+users tend to rate movies whole star ratings like 1,2,3 etc rather than half star ratings like 0.5,1.5,2.5 etc.
 
 ```{r, echo=TRUE}
 # Ratings Histogram
@@ -153,7 +152,8 @@ edx %>%
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-The majority of users rate between 10 and 100 movies, whilst some may rate over 1,000. Including a variable in the model to account for number of ratings should be discussed. 
+The majority of users rate between 10 and 100 movies, whilst some may rate over 1,000. Including a variable in the model to account for number of ratings 
+should be considered to account for this.
 
 ```{r, echo=TRUE}
 # Ratings Users - Number of Ratings
@@ -168,9 +168,11 @@ edx %>%
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-A heatmap showing average movie rating against number of movies rated is plotted. The most common movies ratings and number of movies rated are hightlighted. This occurs for a rating between 3.5 and 4.0 and between 10 and 100 movies.
+A heatmap showing average movie rating against number of movies rated is plotted. The most common movies ratings and number of movies rated are hightlighted.
+This occurs for a rating between 3.5 and 4.0 and between 10 and 100 movies.
 
-A linear curve was fitted to the data to show the overall trajectory of the ratings with number of movies rated. A more memory and calculation intensive curve fitting was attempted but unfortunately unable to run on the author's computer. The more ratings a user gives results in a lower mean rating.
+A linear curve was fitted to the data to show the overall trajectory of the ratings with number of movies rated, the more ratings a user gives results in a
+lower mean rating.
 
 ```{r, echo=TRUE}
 # Ratings Users - Mean by Number with Curve Fitted
