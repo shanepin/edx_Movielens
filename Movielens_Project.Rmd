@@ -134,6 +134,7 @@ edx_train <-rbind(edx_train, removed)
 rm(edx_temp, test_index, removed)
 }
 ```
+
 The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp",
 "title", "genres".
 
@@ -298,16 +299,19 @@ where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, an
 ```{r, echo=TRUE}
 ## Movie and User Effects Model
 # Simple model taking into account the user effects, b_u
-user_avgs <- edx %>%
+
+user_avgs <- edx_train %>%
   left_join(movie_avgs, by="movieId") %>%
   group_by(userId) %>%
   summarise(b_u = mean(rating - mu - b_i))
-predicted_ratings <- validation %>%
+
+predicted_ratings <- edx_test %>%
   left_join(movie_avgs, by='movieId') %>%
   left_join(user_avgs, by='userId') %>%
   mutate(pred = mu + b_i + b_u) %>%
   pull(pred)
-rmse_model_user_effects <- RMSE(predicted_ratings, validation$rating)
+
+rmse_model_user_effects <- RMSE(predicted_ratings, edx_test$rating)
 rmse_model_user_effects
 rmse_results <- bind_rows(rmse_results, 
                           data_frame(method="Movie and User Effects Model",
@@ -329,24 +333,24 @@ $$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$
 lambdas <- seq(0, 10, 0.25)
 rmses <- sapply(lambdas, function(l){
   
-  mu <- mean(edx$rating)
+  mu <- mean(edx_train$rating)
   
-  b_i <- edx %>%
+  b_i <- edx_train %>%
     group_by(movieId) %>%
     summarise(b_i = sum(rating - mu)/(n()+l))
   
-  b_u <- edx %>%
+  b_u <- edx_train %>%
     left_join(b_i, by="movieId") %>%
     group_by(userId) %>%
     summarise(b_u = sum(rating - b_i - mu)/(n()+l))
   
-  predicted_ratings <- validation %>%
+  predicted_ratings <- edx_test %>%
     left_join(b_i, by = "movieId") %>%
     left_join(b_u, by = "userId") %>%
     mutate(pred = mu + b_i + b_u) %>%
     pull(pred)
   
-  return(RMSE(predicted_ratings, validation$rating))
+  return(RMSE(predicted_ratings, edx_test$rating))
   
 })
 rmse_regularisation <- min(rmses)
