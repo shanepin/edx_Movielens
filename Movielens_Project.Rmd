@@ -58,7 +58,6 @@ if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.
 library(tidyverse)
 library(caret)
 library(caret)
-library(hexbin)
 
 # MovieLens 10M dataset:
 # https://grouplens.org/datasets/movielens/10m/
@@ -116,12 +115,25 @@ As the final_holdout_test set will only be used for evaluating the RMSE of the f
 to be used for training, developing and selecting our algorithms.
 
 ```{r, echo=TRUE, message=FALSE}
-edx_test_index <- createDataPartition(y = edx$rating, times = 1, p = 0.1, list = FALSE)
-edx_train <- edx[-edx_test_index, ]
-edx_test <- edx[edx_test_index, ]
+set.seed(1, sample.kind = "Rounding")
+test_index <-createDataPartition(y = edx$rating, times = 1, p = 0.1, list = F)
+edx_train <-edx[-test_index,]
+edx_temp <-edx[test_index,]
+
+#Again, Confirm userId and movieId are in both the train and test sets
+
+edx_test <-edx_temp %>%
+  semi_join(edx_train, by = "movieId") %>%
+  semi_join(edx_train, by = "userId")
+
+#Add the Rows removed from the edx_test back into edx_train
+
+removed <-anti_join(edx_temp, edx_test)
+edx_train <-rbind(edx_train, removed)
+
+rm(edx_temp, test_index, removed)
 }
 ```
-
 The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp",
 "title", "genres".
 
@@ -261,9 +273,11 @@ where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, an
 movie_avgs <- edx_train %>%
   group_by(movieId) %>%
   summarise(b_i = mean(rating - mu))
+
 predicted_ratings <- mu + edx_test %>%
   left_join(movie_avgs, by='movieId') %>%
   pull(b_i)
+
 rmse_model_movie_effects <- RMSE(predicted_ratings, edx_test$rating)
 rmse_model_movie_effects
 rmse_results <- bind_rows(rmse_results, 
