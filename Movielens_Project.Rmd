@@ -258,15 +258,13 @@ where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, an
 
 ```{r, echo=TRUE}
 ## Simple model taking into account the movie effects, b_i
-mu <- mean(edx$rating)
-mu
-movie_avgs <- edx %>%
+movie_avgs <- edx_train %>%
   group_by(movieId) %>%
   summarise(b_i = mean(rating - mu))
-predicted_ratings <- mu + final_holdout_test %>%
+predicted_ratings <- mu + edx_test %>%
   left_join(movie_avgs, by='movieId') %>%
   pull(b_i)
-rmse_model_movie_effects <- RMSE(predicted_ratings, validation$rating)
+rmse_model_movie_effects <- RMSE(predicted_ratings, edx_test$rating)
 rmse_model_movie_effects
 rmse_results <- bind_rows(rmse_results, 
                           data_frame(method="Movie Effects Model",
