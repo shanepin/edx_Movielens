@@ -122,29 +122,30 @@ edx_test <- edx[edx_test_index, ]
 }
 ```
 
-Edx dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp", "title", "genres".
+The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp",
+"title", "genres".
 
 ```{r, echo=TRUE}
 # Summarise edx
-head(edx, 5)
+head(edx_train, 5)
 ```
 
-Summarising the dataset reveals a well formatted set with no missing values. Movies are rated between 0.5 and 5.0, with 9000055 rows in total.
+Summarising the dataset reveals a well formatted set with no missing values. Movies are rated between 0.5 and 5.0, with ~8100000 rows in total.
 
 ```{r, echo=TRUE}
-summary(edx)
+summary(edx_train)
 ```
 
 The dataset contains ~10,700 unique movies, ~70,000 unique movies, and ~800 unique combinations of genres, and a mean movie rating of ~3.5 out of 5.
 
 ```{r, echo=TRUE}
 # Movies, Users and Genres in Database
-edx %>% summarise(
+edx_train %>% summarise(
   uniq_movies = n_distinct(movieId),
   uniq_users = n_distinct(userId),
   uniq_genres = n_distinct(genres))
 # Ratings Mean
-rating_mean <- mean(edx$rating)
+rating_mean <- mean(edx_train$rating)
 rating_mean
 ```
 
@@ -153,7 +154,7 @@ users tend to rate movies whole star ratings like 1,2,3 etc rather than half sta
 
 ```{r, echo=TRUE}
 # Ratings Histogram
-edx %>%
+edx_train %>%
   ggplot(aes(rating)) +
   geom_histogram(binwidth = 0.5, color = "black") +
   xlab("Rating") +
@@ -167,7 +168,7 @@ should be considered to account for this.
 
 ```{r, echo=TRUE}
 # Ratings Users - Number of Ratings
-edx %>% 
+edx_train %>% 
   count(userId) %>%
   ggplot(aes(n)) +
   geom_histogram(color = "black", bins=30) +
@@ -186,7 +187,7 @@ lower mean rating.
 
 ```{r, echo=TRUE}
 # Ratings Users - Mean by Number with Curve Fitted
-edx %>%
+edx_train %>%
   group_by(userId) %>%
   summarise(mu_user = mean(rating), number = n()) %>%
   ggplot(aes(x = mu_user, y = number)) +
@@ -205,7 +206,7 @@ The number of ratings for each movie are shown below in the histogram. A number 
 
 ```{r, echo=TRUE}
 # Ratings Movies - Number of Ratings
-edx %>% 
+edx_train %>% 
   count(movieId) %>%
   ggplot(aes(n)) +
   geom_histogram(color = "black", bins=30) +
@@ -237,9 +238,9 @@ Predicting the mean gives the following naive RMSE.
 
 ```{r, echo=TRUE}
 ## Simple Prediction based on Mean Rating
-mu <- mean(edx$rating)
+mu <- mean(edx_train$rating)
 mu
-rmse_naive <- RMSE(final_holdout_test$rating, mu)
+rmse_naive <- RMSE(edx_test$rating, mu)
 rmse_naive
 ## Save Results in Data Frame
 rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = rmse_naive)
