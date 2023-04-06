@@ -50,7 +50,7 @@ An introductory review of the dataset is performed in order to familiarise ourse
 ```{r, echo=TRUE, message=FALSE}
 # Create edx and final_holdout_test sets 
 
-## Note: this process could take a couple of minutes
+# This process could take a couple of minutes
 
 if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
