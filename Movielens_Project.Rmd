@@ -111,8 +111,8 @@ removed <- anti_join(temp, final_holdout_test)
 }
 ```
 
-As the final_holdout_test set will only be used for evaluating the RMSE of the final algorithm at the end, we need to create separate training and test sets
-to be used for training, developing and selecting our algorithms.
+As the final_holdout_test set will only be used for testing the final algorithm at the end, we need to create separate training and test sets to be used
+for training, developing and selecting our algorithms.
 
 ```{r, echo=TRUE, message=FALSE}
 set.seed(1, sample.kind = "Rounding")
@@ -120,13 +120,13 @@ test_index <-createDataPartition(y = edx$rating, times = 1, p = 0.1, list = F)
 edx_train <-edx[-test_index,]
 edx_temp <-edx[test_index,]
 
-#Again, Confirm userId and movieId are in both the train and test sets
+# Again, Confirm userId and movieId are in both the train and test sets
 
 edx_test <-edx_temp %>%
   semi_join(edx_train, by = "movieId") %>%
   semi_join(edx_train, by = "userId")
 
-#Add the Rows removed from the edx_test back into edx_train
+# Add the Rows removed from the edx_test back into edx_train
 
 removed <-anti_join(edx_temp, edx_test)
 edx_train <-rbind(edx_train, removed)
@@ -149,7 +149,7 @@ Summarising the dataset reveals a well formatted set with no missing values. Mov
 summary(edx_train)
 ```
 
-The dataset contains ~10,700 unique movies, ~70,000 unique movies, and ~800 unique combinations of genres, and a mean movie rating of ~3.5 out of 5.
+The dataset contains ~10,700 unique movies, ~70,000 unique users and ~800 unique combinations of genres, and a mean movie rating of ~3.5 out of 5.
 
 ```{r, echo=TRUE}
 # Movies, Users and Genres in Database
@@ -157,6 +157,7 @@ edx_train %>% summarise(
   uniq_movies = n_distinct(movieId),
   uniq_users = n_distinct(userId),
   uniq_genres = n_distinct(genres))
+
 # Ratings Mean
 rating_mean <- mean(edx_train$rating)
 rating_mean
@@ -255,6 +256,7 @@ mu <- mean(edx_train$rating)
 mu
 rmse_naive <- RMSE(edx_test$rating, mu)
 rmse_naive
+
 ## Save Results in Data Frame
 rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = rmse_naive)
 rmse_results %>% knitr::kable()
