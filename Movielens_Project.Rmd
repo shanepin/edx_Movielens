@@ -57,7 +57,6 @@ if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.
 
 library(tidyverse)
 library(caret)
-library(caret)
 
 # MovieLens 10M dataset:
 # https://grouplens.org/datasets/movielens/10m/
@@ -95,6 +94,7 @@ movies <- movies %>%
 movielens <- left_join(ratings, movies, by = "movieId")
 
 # Final hold-out test set will be 10% of MovieLens data
+
 set.seed(1, sample.kind="Rounding") # if using R 3.6 or later
 # set.seed(1) # if using R 3.5 or earlier
 test_index <- createDataPartition(y = movielens$rating, times = 1, p = 0.1, list = FALSE)
@@ -108,6 +108,7 @@ final_holdout_test <- temp %>%
 
 # Add rows removed from final hold-out test set back into edx set
 removed <- anti_join(temp, final_holdout_test)
+edx <- rbind(edx,removed)
 }
 ```
 
@@ -115,23 +116,20 @@ As the final_holdout_test set will only be used for testing the final algorithm 
 for training, developing and selecting our algorithms.
 
 ```{r, echo=TRUE, message=FALSE}
-set.seed(1, sample.kind = "Rounding")
-test_index <-createDataPartition(y = edx$rating, times = 1, p = 0.1, list = F)
-edx_train <-edx[-test_index,]
-edx_temp <-edx[test_index,]
+set.seed(1, sample.kind = "Rounding") # if using R 3.6 or later
+# set.seed(1) # if using R 3.5 or earlier
+test_index <-createDataPartition(y = edx$rating, times = 1, p = 0.1, list = FALSE)
+edx_train <- edx[-test_index,]
+edx_temp <- edx[test_index,]
 
 # Again, Confirm userId and movieId are in both the train and test sets
-
-edx_test <-edx_temp %>%
+edx_test <- edx_temp %>%
   semi_join(edx_train, by = "movieId") %>%
   semi_join(edx_train, by = "userId")
 
 # Add the Rows removed from the edx_test back into edx_train
-
-removed <-anti_join(edx_temp, edx_test)
-edx_train <-rbind(edx_train, removed)
-
-rm(edx_temp, test_index, removed)
+removed <- anti_join(edx_temp, edx_test)
+edx_train <- rbind(edx_train, removed)
 }
 ```
 
@@ -149,7 +147,7 @@ Summarising the dataset reveals a well formatted set with no missing values. Mov
 summary(edx_train)
 ```
 
-The dataset contains ~10,700 unique movies, ~70,000 unique users and ~800 unique combinations of genres, and a mean movie rating of ~3.5 out of 5.
+The dataset contains ~10,700 unique movies, ~70,000 unique users and ~800 unique genres, and a mean movie rating of ~3.5 out of 5.
 
 ```{r, echo=TRUE}
 # Movies, Users and Genres in Database
@@ -248,7 +246,7 @@ The simple prediction model uses the mean of the dataset to predict the rating f
 $$ Y_{u,i} = \mu + \epsilon_{u,i} $$
 where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the expected "true" rating for all movies. 
 
-Predicting the mean gives the following naive RMSE.
+Predicting the mean gives the following naive RMSE of ~1.06 which is far from ideal and doesn't help us in recommendation system.
 
 ```{r, echo=TRUE}
 ## Simple Prediction based on Mean Rating
@@ -265,7 +263,7 @@ rmse_results %>% knitr::kable()
 Investigating the dataset allows for more advanced analysis and rating predictions with smaller error.
 
 ## Movie Effects Model
-The Movie Effects Model calculates a bias term for each movie based on the difference between the movies mean rating and the overall mean rating.
+The Movie Effects Model calculates a bias term for each movie based on the difference between the movies mean rating and the overall mean rating. 
 
 $$ Y_{u,i} = \mu + b_i + \epsilon_{u,i} $$
 where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the mean rating for all movies, and $b_i$ is the bias for each movie $i$.
@@ -289,7 +287,9 @@ rmse_results <- bind_rows(rmse_results,
 rmse_results %>% knitr::kable()
 ```
 
-The Movie Effect Model; predicting the movie rating with both bias, $b_i$, and mean, $\mu$ gives an improved prediction with a lower RMSE value.
+The Movie Effect Model, predicting the movie rating with both bias, $b_i$, and mean, $\mu$ gives an improved prediction with a lower RMSE value.
+But can we do better by accounting for more variables / biasis affecting the overall RMSE.
+
 
 ## Movie and User Effects Model
 
@@ -321,7 +321,7 @@ rmse_results <- bind_rows(rmse_results,
 rmse_results %>% knitr::kable()
 ```
 
-Incorporating the user bias into the model resulted in a further reduced RMSE.
+Incorporating the user bias into the model resulted in a further reduced RMSE and is a marked improvement as compared to the previous models.
 
 ## Regularisation
 
@@ -331,7 +331,6 @@ $$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$
 
 ```{r, echo=TRUE}
 # Predict via regularisation, movie and user effect model
-# (as per https://rafalab.github.io/dsbook 34.9 Regularization)
 lambdas <- seq(0, 10, 0.25)
 rmses <- sapply(lambdas, function(l){
   
@@ -388,16 +387,57 @@ The final model optimised for the prediction is the following;
 
 $$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$
 
-The lowest value of RMSE predicted is 0.8648170.
+The lowest value of RMSE predicted is 0.0.8641362.
 
 # Conclusion
-A machine learning alogorithm to predict the ratings from the Movie Lens dataset was constructed. The optimal model incorporated the effects of both user and movie bias were incorporated in the model, and these valiables were regulised to incorporate movies will a low number of ratings.
+A machine learning alogorithm to predict the ratings from the Movie Lens dataset was constructed. The optimal model incorporated the effects of both user and
+movie bias were incorporated in the model, and these valiables were regulised to incorporate movies will a low number of ratings.
 
 The aim of the project was to develop an algorithm lower than 0.87750, which was achieved by the Movie and User Effects and Regularised Movie and User Effects model.
 
 
 \pagebreak
 
+# Now we use the Regularised Movie and User Effects Model alogorithm on our our final_holdout_test set to test the sucess of our findings.
+
+```{r, echo=TRUE}
+## Simple Prediction based on Mean Rating on the final_holdout_test set
+mu <- mean(edx$rating)
+mu
+final_rmse_naive <- RMSE(final_holdout_test$rating, mu)
+final_rmse_naive
+
+## Save Results in Data Frame
+final_rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = final_rmse_naive)
+final_rmse_results %>% knitr::kable()
+
+# Predict via regularisation, movie and user effect model
+
+min_lambda <- 5
+mu <- mean(edx$rating)
+b_i <- edx %>%
+    group_by(movieId) %>%
+    summarise(b_i = sum(rating - mu)/(n()+min_lambda))
+b_u <- edx %>%
+    left_join(b_i, by="movieId") %>%
+    group_by(userId) %>%
+    summarise(b_u = sum(rating - b_i - mu)/(n()+min_lambda))
+
+predicted_ratings <- final_holdout_test %>%
+    left_join(b_i, by = "movieId") %>%
+    left_join(b_u, by = "userId") %>%
+    mutate(pred = mu + b_i + b_u) %>%
+    pull(pred)
+  
+final_rmse_model <- RMSE(final_holdout_test$rating,predicted_ratings)
+final_rmse_model
+
+## Save Results in Data Frame
+final_rmse_results <- bind_rows(final_rmse_results, 
+                          data_frame(method="Regularised Movie and User Effects Model",
+                                     RMSE = final_rmse_model))
+rmse_results %>% knitr::kable()
+```
 
 # Appendix
 ## Environment
