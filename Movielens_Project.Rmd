@@ -398,7 +398,10 @@ The aim of the project was to develop an algorithm lower than 0.87750, which was
 
 \pagebreak
 
-# Now we use the Regularised Movie and User Effects Model alogorithm on our our final_holdout_test set to test the sucess of our findings.
+# Conforming validy of the recommended model using the final_holdout_set.
+
+Now we use the Regularised Movie and User Effects Model alogorithm on our our final_holdout_test set to validate the sucess of our findings. We compare
+this RMSE verus just the naive RMSE to give it some context.
 
 ```{r, echo=TRUE}
 ## Simple Prediction based on Mean Rating on the final_holdout_test set
@@ -413,15 +416,17 @@ final_rmse_results %>% knitr::kable()
 
 # Predict via regularisation, movie and user effect model
 
+As lambda of 5 was shown to be the best Tune for the earlier models, we will use the same on the final_holdout_set.
 min_lambda <- 5
+
 mu <- mean(edx$rating)
 b_i <- edx %>%
     group_by(movieId) %>%
-    summarise(b_i = sum(rating - mu)/(n()+min_lambda))
+    summarise(b_i = sum(rating - mu)/(n() + min_lambda))
 b_u <- edx %>%
     left_join(b_i, by="movieId") %>%
     group_by(userId) %>%
-    summarise(b_u = sum(rating - b_i - mu)/(n()+min_lambda))
+    summarise(b_u = sum(rating - b_i - mu)/(n() + min_lambda))
 
 predicted_ratings <- final_holdout_test %>%
     left_join(b_i, by = "movieId") %>%
@@ -436,11 +441,18 @@ final_rmse_model
 final_rmse_results <- bind_rows(final_rmse_results, 
                           data_frame(method="Regularised Movie and User Effects Model",
                                      RMSE = final_rmse_model))
-rmse_results %>% knitr::kable()
+final_rmse_results %>% knitr::kable()
 ```
+# Conclusion and Final Thoughts
 
-# Appendix
-## Environment
-```{r, echo=FALSE}
-version
-```
+The selected model has a RMSE of 0.8641362 using the final_holdout_test set and has therefore achieved the goal we had set. This model significantly 
+improves upon the benchmarking model’s Naive RMSE of 1.06.
+
+While the final model, which was comprised of User effects, Movie Effects and with Regularization performed well, there are additional biases that can
+been explored to further improve the accuracy of the model like year of release, star cast etc. Additionally, methods such as matrix factorization using the
+recosystem package could be utilized to provide significant improvements in the RMSE.
+
+More advanced models featuring Random Forests and those based on Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate
+higher levels of accuracy, though they are also far more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors
+and Collaborative Filtering with cosine similarity promise to continue making strides and improve the overall user experience for streamers everywhere.
+
