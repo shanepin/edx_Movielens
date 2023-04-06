@@ -26,10 +26,12 @@ by using historical ratings of users to movies in the dataset. Netflix uses a re
 One star suggests it is not a good movie, whereas five stars suggests it is an excellent movie. Here, we provide the basics of how these recommendations are made,
 motivated by some of the approaches taken by the winners of the Netflix challenges. 
 
-To test the succes of of our recommendation system we will use the Residual Mean Square Error (RMSE) to evalute the accuracy of the algorithm. RMSE is one of the most tested methods that measures the differences between values predicted by a model and the values observed, a lower RMSE is better than a higher one. 
+To test the success of our recommendation system we will use the Residual Mean Square Error (RMSE) to evaluate the accuracy of the algorithm. RMSE is one of the
+most tested methods that measures the differences between values predicted by a model and the values observed, a lower RMSE is better than a higher one. 
 
-The evaluation criteria for this algorithm is a RMSE expected to be lower than 0.8775 and is a function that computes the RMSE for vectors of ratings and their
-corresponding predictors and is stated as the following:
+We can interpret RMSE similarly to a standard deviation, it is the typical error we make when predicting a movie rating. If this number is larger than 1, it
+means our typical error is larger than one star, which is not good. Our aim is therefore to obtain a RMSE below 1 and can be written as a function that
+computes the RMSE for vectors of ratings and their corresponding predictors
 
 $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} $$
 
@@ -46,11 +48,9 @@ This report will present an overview of the data, analysis, results and a conclu
 An introductory review of the dataset is performed in order to familiarise ourselves. Data is downloaded as per instruction from the MovieLens 10M dataset.
 
 ```{r, echo=TRUE, message=FALSE}
-##########################################################
 # Create edx and final_holdout_test sets 
-##########################################################
 
-# Note: this process could take a couple of minutes
+## Note: this process could take a couple of minutes
 
 if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
 if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
@@ -133,7 +133,7 @@ edx_train <- rbind(edx_train, removed)
 }
 ```
 
-The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the vaiables; "userId", "movieId", "rating", "timestamp",
+The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the variables; "userId", "movieId", "rating", "timestamp",
 "title", "genres".
 
 ```{r, echo=TRUE}
@@ -191,7 +191,7 @@ edx_train %>%
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-A heatmap showing average movie rating against number of movies rated is plotted. The most common movies ratings and number of movies rated are hightlighted.
+A heatmap showing average movie rating against number of movies rated is plotted. The most common movies ratings and number of movies rated are highlighted.
 This occurs for a rating between 3.5 and 4.0 and between 10 and 100 movies.
 
 A linear curve was fitted to the data to show the overall trajectory of the ratings with number of movies rated, the more ratings a user gives results in a
@@ -287,8 +287,8 @@ rmse_results <- bind_rows(rmse_results,
 rmse_results %>% knitr::kable()
 ```
 
-The Movie Effect Model, predicting the movie rating with both bias, $b_i$, and mean, $\mu$ gives an improved prediction with a lower RMSE value.
-But can we do better by accounting for more variables / biasis affecting the overall RMSE.
+The Movie Effect Model predicting the movie ratings with both biases $b_i$ and the mean $\mu$ gives an improved prediction with a lower RMSE value.
+But can we do better by accounting for more variables and biasis affecting the overall RMSE.
 
 
 ## Movie and User Effects Model
@@ -325,7 +325,8 @@ Incorporating the user bias into the model resulted in a further reduced RMSE an
 
 ## Regularisation
 
-Regularisation allows for reduced errors caused by movies with few ratings which can influence the prediction and skew the error metric. The method uses a tuning parmeter, $\lambda$, to minimise the RMSE. Modifying $b_i$ and $b_u$ for movies with limited ratings.
+Regularisation allows for reduced errors caused by movies with few ratings which can influence the prediction and skew the error metric. The method uses
+a tuning parameter, $\lambda$, to minimise the RMSE. Modifying $b_i$ and $b_u$ for movies with limited ratings.
 
 $$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$
 
@@ -369,7 +370,7 @@ rmse_results <- bind_rows(rmse_results,
 rmse_results %>% knitr::kable()
 ```
 
-Regulisation of a Movie and User Effect model has lead to a lowest RMSE of the prediction methods for the MovieLens ratings system.
+Regularisation of a Movie and User Effect model has lead to a lowest RMSE of the prediction methods for the MovieLens ratings system.
 
 \pagebreak
 
@@ -381,7 +382,8 @@ The final values of the prediction models are shown below;
 rmse_results %>% knitr::kable()
 ```
 
-The models from most accurate to least accurate are as follows; Regularised Movie and User Effects Model; Movie and User Effects Model; Movie Effects Model; and Simple Average Model.
+The models from most accurate to least accurate are as follows, Regularised Movie and User Effects Model, Movie and User Effects Model, Movie Effects Model
+and Simple Average Model.
 
 The final model optimised for the prediction is the following;
 
@@ -390,21 +392,20 @@ $$ Y_{u,i} = \mu + b_{i,n,\lambda} + b_{u,n,\lambda} + \epsilon_{u,i} $$
 The lowest value of RMSE predicted is 0.0.8641362.
 
 # Conclusion
-A machine learning alogorithm to predict the ratings from the Movie Lens dataset was constructed. The optimal model incorporated the effects of both user and
-movie bias were incorporated in the model, and these valiables were regulised to incorporate movies will a low number of ratings.
+A machine learning algorithm to predict the ratings from the Movie Lens dataset was constructed. The optimal model incorporated the effects of both user and
+movie biases and these variables were regularised to incorporate movies will a low number of ratings.
 
-The aim of the project was to develop an algorithm lower than 0.87750, which was achieved by the Movie and User Effects and Regularised Movie and User Effects model.
-
+The aim of the project was to develop an algorithm with RMSE lower than 1 which was achieved by using the Movie and User Effects along with Regularisation.
 
 \pagebreak
 
-# Conforming validy of the recommended model using the final_holdout_set.
+# Validating our preferred model by uUsing the final_holdout_set.
 
-Now we use the Regularised Movie and User Effects Model alogorithm on our our final_holdout_test set to validate the sucess of our findings. We compare
-this RMSE verus just the naive RMSE to give it some context.
+Now we use the Regularised Movie and User Effects Model alogorithm on the final_holdout_test set to validate the sucess of our findings. We compare the
+RMSE obtained verus just the naive RMSE to give it some context.
 
 ```{r, echo=TRUE}
-## Simple Prediction based on Mean Rating on the final_holdout_test set
+# Prediction based on Mean Rating on the final_holdout_test set
 mu <- mean(edx$rating)
 mu
 final_rmse_naive <- RMSE(final_holdout_test$rating, mu)
@@ -448,11 +449,8 @@ final_rmse_results %>% knitr::kable()
 The selected model has a RMSE of 0.8641362 using the final_holdout_test set and has therefore achieved the goal we had set. This model significantly 
 improves upon the benchmarking model’s Naive RMSE of 1.06.
 
-While the final model, which was comprised of User effects, Movie Effects and with Regularization performed well, there are additional biases that can
-been explored to further improve the accuracy of the model like year of release, star cast etc. Additionally, methods such as matrix factorization using the
-recosystem package could be utilized to provide significant improvements in the RMSE.
-
-More advanced models featuring Random Forests and those based on Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate
-higher levels of accuracy, though they are also far more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors
-and Collaborative Filtering with cosine similarity promise to continue making strides and improve the overall user experience for streamers everywhere.
+While the final model, which was comprised of User Effects, Movie Effects and with Regularization performed well, there are additional biases that could
+be explored to further improve the accuracy of the model like year of release, star cast etc. More advanced models featuring Random Forests and those
+based on Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate higher levels of accuracy, though they are also far
+more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity promise to continue making strides and improve the overall user experience for streamers everywhere.
 
