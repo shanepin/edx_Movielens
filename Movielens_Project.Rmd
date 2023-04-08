@@ -129,7 +129,7 @@ removed <- anti_join(edx_temp, edx_test)
 edx_train <- rbind(edx_train, removed)
 ```
 
-## Anlysing the created datasets
+## Analysing the created datasets
 
 An introductory review of the dataset is performed in order to familiarise ourselves. The edx_train dataset contains rows corresponding to an users
 rating of a movie. The set contains the variables; "userId", "movieId", "rating", "timestamp","title", "genres".
@@ -245,13 +245,13 @@ where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, an
 Predicting the mean gives the following naive RMSE of ~1.06 which is far from ideal and doesn't help us in recommendation system.
 
 ```{r, echo=TRUE}
-## Simple Prediction based on Mean Rating
+# Simple Prediction based on Mean Rating
 mu <- mean(edx_train$rating)
 mu
 rmse_naive <- RMSE(edx_test$rating, mu)
 rmse_naive
 
-## Save Results in Data Frame
+# Save Results in Data Frame
 rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = rmse_naive)
 rmse_results %>% knitr::kable()
 ```
@@ -264,9 +264,8 @@ The Movie Effects Model calculates a bias term for each movie based on the diffe
 $$ Y_{u,i} = \mu + b_i + \epsilon_{u,i} $$
 where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the mean rating for all movies, and $b_i$ is the bias for each movie $i$.
 
-
 ```{r, echo=TRUE}
-## Simple model taking into account the movie effects, b_i
+# Simple model taking into account the movie effects, b_i
 movie_avgs <- edx_train %>%
   group_by(movieId) %>%
   summarise(b_i = mean(rating - mu))
@@ -286,7 +285,6 @@ rmse_results %>% knitr::kable()
 The Movie Effect Model predicting the movie ratings with both biases $b_i$ and the mean $\mu$ gives an improved prediction with a lower RMSE value.
 But can we do better by accounting for more variables and biasis affecting the overall RMSE.
 
-
 ## Movie and User Effects Model
 
 The next step is to incorporate the individual User Effects, $b_u$, in to the model. Acknowledging each user inherent bias to mark all films higher or lower. 
@@ -295,8 +293,7 @@ $$ Y_{u,i} = \mu + b_i + b_u + \epsilon_{u,i} $$
 where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the mean rating for all movies, $b_i$ is the bias for each movie $i$, and $b_u$ is the bias for each user $u$.
 
 ```{r, echo=TRUE}
-## Movie and User Effects Model
-# Simple model taking into account the user effects, b_u
+# Movie and User Effects Model taking into account the user effects, b_u
 
 user_avgs <- edx_train %>%
   left_join(movie_avgs, by="movieId") %>%
@@ -349,8 +346,8 @@ rmses <- sapply(lambdas, function(l){
     pull(pred)
   
   return(RMSE(predicted_ratings, edx_test$rating))
-  
-})
+  })
+
 rmse_regularisation <- min(rmses)
 rmse_regularisation
 ```
@@ -360,6 +357,7 @@ rmse_regularisation
 qplot(lambdas, rmses)
 lambda <- lambdas[which.min(rmses)]
 lambda
+
 rmse_results <- bind_rows(rmse_results, 
                           data_frame(method="Regularised Movie and User Effects Model",
                                      RMSE = rmse_regularisation))
@@ -412,11 +410,11 @@ final_rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = final_
 final_rmse_results %>% knitr::kable()
 
 # Predict via regularisation, movie and user effect model
-
 As lambda of 5 was shown to be the best Tune for the earlier models, we will use the same on the final_holdout_set.
 min_lambda <- 5
 
 mu <- mean(edx$rating)
+
 b_i <- edx %>%
     group_by(movieId) %>%
     summarise(b_i = sum(rating - mu)/(n() + min_lambda))
