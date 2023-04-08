@@ -37,13 +37,14 @@ $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} 
 ```{r RMSE_function1, echo = FALSE}
 RMSE <- function(predicted_ratings, true_ratings){
   sqrt(mean((predicted_ratings - true_ratings)^2))
+}
 ```
 
 This report will present an overview of the data, analysis, results and a conclusion.
 
-## Dataset
+## Creating the Dataset
 
-An introductory review of the dataset is performed in order to familiarise ourselves. Data is downloaded as per instruction from the MovieLens 10M dataset.
+Data is downloaded and set up as per instruction from the MovieLens Capstone Project dataset.
 
 ```{r, echo=TRUE, message=FALSE}
 
@@ -128,8 +129,10 @@ removed <- anti_join(edx_temp, edx_test)
 edx_train <- rbind(edx_train, removed)
 ```
 
-The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the variables; "userId", "movieId", "rating", "timestamp",
-"title", "genres".
+## Anlysing the created datasets
+
+An introductory review of the dataset is performed in order to familiarise ourselves. The edx_train dataset contains rows corresponding to an users
+rating of a movie. The set contains the variables; "userId", "movieId", "rating", "timestamp","title", "genres".
 
 ```{r, echo=TRUE}
 # Summarise edx
@@ -225,7 +228,7 @@ edx_train %>%
 \pagebreak
 
 
-# Analysis and Results
+# Analysis and Result Interpretation
 The Residual Mean Square Error (RMSE) is the error function to that will measure accuracy and quantify the typical error we make when predicting the movie rating.
 An error larger than 0.8775, it means our typical error is larger than the required for this assignment almost a star, which is not good. 
 
@@ -442,8 +445,8 @@ final_rmse_results %>% knitr::kable()
 The selected model has a RMSE of 0.8641362 using the final_holdout_test set and has therefore achieved the goal we had set. This model significantly 
 improves upon the benchmarking model’s Naive RMSE of 1.06.
 
-While the final model, which was comprised of User Effects, Movie Effects and with Regularization performed well, there are additional biases that could
-be explored to further improve the accuracy of the model like year of release, star cast etc. More advanced models featuring Random Forests and those
-based on Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate higher levels of accuracy, though they are also far
-more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity
+While the final model, which was comprised of User Effects, Movie Effects and with Regularization performed well, there are additional biases that could be
+explored to further improve the accuracy of the model like year of release, star cast etc. More advanced models featuring Random Forests and those based on
+Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate higher levels of accuracy, though they are also far more
+computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity
 promise to continue making strides and improve the overall user experience for streamers everywhere.
