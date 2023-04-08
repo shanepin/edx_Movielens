@@ -3,7 +3,7 @@ title: "Project: MovieLens Ratings System"
 author: "Shane Pinto"
 date: "2023-04-01"
 output: 
-  pdf_document:
+  word_document:
     number_sections: true 
     toc: true
 ---
@@ -46,6 +46,7 @@ This report will present an overview of the data, analysis, results and a conclu
 An introductory review of the dataset is performed in order to familiarise ourselves. Data is downloaded as per instruction from the MovieLens 10M dataset.
 
 ```{r, echo=TRUE, message=FALSE}
+
 # Create edx and final_holdout_test sets 
 
 # This process could take a couple of minutes
@@ -74,27 +75,25 @@ movies_file <- "ml-10M100K/movies.dat"
 if(!file.exists(movies_file))
   unzip(dl, movies_file)
 
-ratings <- as.data.frame(str_split(read_lines(ratings_file), fixed("::"), simplify = TRUE),
-                         stringsAsFactors = FALSE)
+ratings <- as.data.frame(str_split(read_lines(ratings_file), fixed("::"), simplify = TRUE), stringsAsFactors = FALSE)
 colnames(ratings) <- c("userId", "movieId", "rating", "timestamp")
+
 ratings <- ratings %>%
   mutate(userId = as.integer(userId),
          movieId = as.integer(movieId),
          rating = as.numeric(rating),
          timestamp = as.integer(timestamp))
 
-movies <- as.data.frame(str_split(read_lines(movies_file), fixed("::"), simplify = TRUE),
-                        stringsAsFactors = FALSE)
+movies <- as.data.frame(str_split(read_lines(movies_file), fixed("::"), simplify = TRUE), stringsAsFactors = FALSE)
 colnames(movies) <- c("movieId", "title", "genres")
+
 movies <- movies %>%
   mutate(movieId = as.integer(movieId))
 
 movielens <- left_join(ratings, movies, by = "movieId")
 
 # Final hold-out test set will be 10% of MovieLens data
-
 set.seed(1, sample.kind="Rounding") # if using R 3.6 or later
-# set.seed(1) # if using R 3.5 or earlier
 test_index <- createDataPartition(y = movielens$rating, times = 1, p = 0.1, list = FALSE)
 edx <- movielens[-test_index,]
 temp <- movielens[test_index,]
@@ -107,7 +106,6 @@ final_holdout_test <- temp %>%
 # Add rows removed from final hold-out test set back into edx set
 removed <- anti_join(temp, final_holdout_test)
 edx <- rbind(edx,removed)
-}
 ```
 
 As the final_holdout_test set will only be used for testing the final algorithm at the end, we need to create separate training and test sets to be used
@@ -128,7 +126,6 @@ edx_test <- edx_temp %>%
 # Add the Rows removed from the edx_test back into edx_train
 removed <- anti_join(edx_temp, edx_test)
 edx_train <- rbind(edx_train, removed)
-}
 ```
 
 The edx_train dataset contains rows corresponding to an users rating of a movie. The set contains the variables; "userId", "movieId", "rating", "timestamp",
@@ -190,10 +187,8 @@ edx_train %>%
 ```
 
 A heatmap showing average movie rating against number of movies rated is plotted. The most common movies ratings and number of movies rated are highlighted.
-This occurs for a rating between 3.5 and 4.0 and between 10 and 100 movies.
-
-A linear curve was fitted to the data to show the overall trajectory of the ratings with number of movies rated, the more ratings a user gives results in a
-lower mean rating.
+This occurs for a rating between 3.5 and 4.0 and between 10 and 100 movies. A linear curve was fitted to the data to show the overall trajectory of the 
+ratings with number of movies rated, the more ratings a user gives results in a lower mean rating.
 
 ```{r, echo=TRUE}
 # Ratings Users - Mean by Number with Curve Fitted
