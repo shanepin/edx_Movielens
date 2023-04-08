@@ -452,5 +452,5 @@ improves upon the benchmarking model’s Naive RMSE of 1.06.
 While the final model, which was comprised of User Effects, Movie Effects and with Regularization performed well, there are additional biases that could
 be explored to further improve the accuracy of the model like year of release, star cast etc. More advanced models featuring Random Forests and those
 based on Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate higher levels of accuracy, though they are also far
-more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity promise to continue making strides and improve the overall user experience for streamers everywhere.
-
+more computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity
+promise to continue making strides and improve the overall user experience for streamers everywhere.
