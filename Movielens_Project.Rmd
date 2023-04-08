@@ -1,4 +1,3 @@
-
 ---
 title: "Project: MovieLens Ratings System"
 author: "Shane Pinto"
@@ -38,7 +37,6 @@ $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} 
 ```{r RMSE_function1, echo = FALSE}
 RMSE <- function(predicted_ratings, true_ratings){
   sqrt(mean((predicted_ratings - true_ratings)^2))
-}
 ```
 
 This report will present an overview of the data, analysis, results and a conclusion.
