@@ -27,7 +27,7 @@ To test the success of our recommendation system we will use the Residual Mean S
 preferred methods that measure the differences between values predicted by a model and the values observed, a lower RMSE is better than a higher one. 
 
 We can interpret RMSE similarly to a standard deviation, it is the typical error we make when predicting a movie rating. If this number is larger than 1, it
-means our typical error is larger than one star, which is not good. Our aim is therefore to obtain a RMSE below 1,  this can be written as a function that
+means our typical error is larger than one star, which is not good. Our aim is therefore to obtain a RMSE below 1, this can be written as a function that
 computes the RMSE for vectors of ratings and their corresponding predictors
 
 $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} $$
@@ -116,7 +116,7 @@ test_index <-createDataPartition(y = edx$rating, times = 1, p = 0.1, list = FALS
 edx_train <- edx[-test_index,]
 edx_temp <- edx[test_index,]
 
-# Again, Confirm userId and movieId are in both the train and test sets
+# Again, we need to confirm userId and movieId are in both the train and test sets
 edx_test <- edx_temp %>%
   semi_join(edx_train, by = "movieId") %>%
   semi_join(edx_train, by = "userId")
@@ -156,7 +156,7 @@ rating_mean <- mean(edx_train$rating)
 rating_mean
 ```
 
-A histogram of the dataset mapping ratings and counts revals that the highest rating was 4.0 while the lowest rating was 0.5. Overall we also notice that 
+A histogram of the dataset mapping ratings and counts reveals that the highest rating was 4.0 while the lowest rating was 0.5.Overall, we also notice that 
 users tend to rate movies with whole star ratings like 1,2,3 etc rather than half star ratings like 0.5,1.5,2.5 etc.
 
 ```{r, echo=TRUE}
@@ -229,7 +229,7 @@ edx_train %>%
 # Analysis and Result Interpretation
 
 The Residual Mean Square Error (RMSE) is the error function to that will measure accuracy and quantify the typical error we make when predicting the movie rating.
-An RMSE greater than or equl to 1 means our typical error is larger than almost a star, which is not good. 
+An RMSE greater than or equal to 1 means our typical error is larger than almost a star, which is not good. 
 
 RMSE defined;
 $$ RMSE = \sqrt{\frac{1}{N}\displaystyle\sum_{u,i} (\hat{y}_{u,i}-y_{u,i})^{2}} $$
@@ -283,7 +283,7 @@ The Movie Effects Model predicting the movie ratings with both biases $b_i$ and 
 But can we do better by accounting for more variables and biasis affecting the overall RMSE.
 
 ## Movie and User Effects Model
-The next step is to incorporate the individual User Effects, $b_u$, in to the model, acknowledging that each users inherent bias to mark all films higher or lower. 
+The next step is to incorporate the individual User Effects, $b_u$, in to the model, acknowledging that each user's inherent bias to mark all films higher or lower. 
 
 $$ Y_{u,i} = \mu + b_i + b_u + \epsilon_{u,i} $$
 where $Y_{u,i}$ is the prediction, $\epsilon_{u,i}$ is the independent error, and $\mu$ the mean rating for all movies, $b_i$ is the bias for each movie $i$, and $b_u$ is the bias for each user $u$.
@@ -359,7 +359,7 @@ rmse_results <- bind_rows(rmse_results,
 rmse_results %>% knitr::kable()
 ```
 
-Regularisation of a Movie and User Effect model has lead to a lowest RMSE of the prediction methods for the MovieLens ratings system.
+Regularisation of a Movie and User Effect model has led to a lowest RMSE of the prediction methods for the MovieLens ratings system.
 
 \pagebreak
 
@@ -371,8 +371,8 @@ The final values of the prediction models are shown below;
 rmse_results %>% knitr::kable()
 ```
 
-The RMSE results table tells us that the Regularised Movie and User Effects Model has been the yielded the lowest RMSE and hence has been the most successfull
-at achieving our goal. The basic Naive Mean Model has been least successfull and really is not very helpful at achieving our goals.
+The RMSE results table tells us that the Regularised Movie and User Effects Model has been the yielded the lowest RMSE and hence has been the most successful
+at achieving our goal. The basic Naive Mean Model has been least successful and really is not very helpful at achieving our goals.
 
 The final model optimised for the prediction is the following;
 
@@ -384,14 +384,14 @@ movie biases and these variables were regularised to incorporate movies will a l
 
 The aim of the project was to develop an algorithm with RMSE lower than 1 which was achieved by using the Movie and User Effects along with Regularisation.
 
-The lowest value of RMSE obbtained via  this model was 0.8654673.
+The lowest value of RMSE obtained via this model was 0.8654673.
 
 \pagebreak
 
 # Validating our preferred model using the final_holdout_set.
 
-Now we use the Regularised Movie and User Effects Model alogorithm on the final_holdout_test set to validate the sucess of our findings. We compare the
-RMSE obtained verus just the naive RMSE to give it some context.
+Now we use the Regularised Movie and User Effects Model algorithm on the final_holdout_test set to validate the success of our findings. We compare the
+RMSE obtained versus just the naive RMSE to give it some context.
 
 ```{r, echo=TRUE}
 # Prediction based on Mean Rating on the final_holdout_test set
@@ -405,7 +405,7 @@ final_rmse_results = data_frame(method = "Naive Analysis by Mean", RMSE = final_
 final_rmse_results %>% knitr::kable()
 
 # Predict via regularisation, movie and user effect model
-# As lambda of 4.5 was shown to be the best Tune for the earlier models, we will use the same on the final_holdout_set.
+# We use the minimum lambda value from the earlier models on the final_holdout_set as it was shown to be the best tune.
 min_lambda <- min_lambda
 
 mu <- mean(edx$rating)
@@ -436,10 +436,10 @@ final_rmse_results %>% knitr::kable()
 # Conclusion and Final Thoughts
 
 The selected model has a RMSE of 0.8648242 using the final_holdout_test set and has therefore achieved the goal we had set. This model significantly 
-improves upon the benchmarking model’s Naive RMSE of ~1.06 and can be suggested as an recommended model.
+improves upon the benchmarking model’s Naive RMSE of ~1.06 and can be suggested as a recommended model.
 
 While the final model, which was comprised of User Effects, Movie Effects and with Regularization performed well, there are additional biases that could be
 explored to further improve the accuracy of the model like year of release, genre, sub genres etc. More advanced models featuring Random Forests and those based on
 Singular Value Decomposition (made famous by Simon Funk during the Netflix Challenge) generate higher levels of accuracy, though they are also far more
-computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbors and Collaborative Filtering with cosine similarity
+computationally intensive. It is likely that future iterations of models involving K-Nearest-Neighbours and Collaborative Filtering with cosine similarity
 promise to continue making strides and improve the overall user experience for streamers everywhere.
