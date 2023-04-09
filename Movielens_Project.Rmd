@@ -406,7 +406,7 @@ final_rmse_results %>% knitr::kable()
 
 # Predict via regularisation, movie and user effect model
 # We use the minimum lambda value from the earlier models on the final_holdout_set as it was shown to be the best tune.
-min_lambda <- min_lambda
+min_lambda <- lambda
 
 mu <- mean(edx$rating)
 
